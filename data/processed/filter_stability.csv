@@ -1,0 +1,5 @@
+Filter,Maximum Pole Magnitude,Stable
+Butterworth,0.9993273513926725,True
+Chebyshev I,0.999763013153186,True
+Chebyshev II,0.9994797224092504,True
+Elliptic,0.999822863059983,True

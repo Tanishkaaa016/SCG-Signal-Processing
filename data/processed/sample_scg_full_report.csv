@@ -1,0 +1,2 @@
+duration_s,sampling_frequency_hz,sampling_jitter_percent,signal_std,signal_rms,peak_to_peak,quality_status,heart_rate_bpm,respiration_rate_bpm
+29.996,249.99999999999977,3.1278024069158623e-11,0.00911739035289098,0.00911739035289098,0.04083251953125,REQUIRES FURTHER VALIDATION,73.71407872494561,14.999999999999988
