@@ -147,8 +147,105 @@ The main processing functions are available in `src/scg_pipeline.py`.
 - Validate sampling frequency and signal quality using hardware recordings.
 - Evaluate HR and RR estimates against suitable reference measurements.
 - Improve real-time processing and peak detection.
-- Test the pipeline across multiple recordings.
+- Test the pipeline across multiple recordings.## Instructions for Hardware Integration and Processing
 
-## Disclaimer
+This section outlines the steps to follow once the ESP32 and MPU6050 hardware setup is completed.
 
-This project is an academic signal-processing implementation and is not intended for medical diagnosis or clinical decision-making.
+### Step 1: Record SCG Data
+
+Use the ESP32 connected to the MPU6050 accelerometer to collect chest vibration data.
+
+Export the readings as a CSV file containing the following columns:
+
+| Column | Description |
+|---|---|
+| `sample_index` | Sequential sample number |
+| `timestamp_ms` | Timestamp in milliseconds |
+| `ax_raw` | Raw X-axis acceleration |
+| `ay_raw` | Raw Y-axis acceleration |
+| `az_raw` | Raw Z-axis acceleration |
+
+Ensure that timestamps are recorded consistently and that the actual sampling frequency is measured.
+
+### Step 2: Add the Hardware CSV
+
+1. Download or export the recorded CSV file.
+2. Place it inside `data/raw/`.
+3. Give it a descriptive name, for example:
+
+   `hardware_scg_01.csv`
+
+4. Do not overwrite or delete `sample_scg.csv`, as it is the original simulated dataset.
+
+The directory should look like:
+
+```text
+data/
+├── raw/
+│   ├── sample_scg.csv
+│   └── hardware_scg_01.csv
+└── processed/
+```
+
+### Step 3: Verify the Recording
+
+Before processing, check:
+
+- All required columns are present.
+- There are no missing or invalid readings.
+- Timestamps are increasing and consistent.
+- Actual sampling frequency is calculated from timestamps.
+- Recording duration is sufficient for analysis.
+- The signal is not flat, clipped, or excessively noisy.
+
+Use the existing signal-quality assessment functions in `src/scg_pipeline.py` as an initial engineering check.
+
+### Step 4: Process the Hardware Recording
+
+Open `notebooks/03_rates.ipynb`.
+
+Update the input file path to the new hardware recording:
+
+```python
+file_path = "data/raw/hardware_scg_01.csv"
+```
+
+Run the processing pipeline:
+
+```python
+import scg_pipeline
+
+results = scg_pipeline.process_scg_recording(file_path)
+```
+
+The pipeline performs:
+
+- Signal loading and preprocessing.
+- Heartbeat filtering.
+- Respiration filtering.
+- Heart rate estimation.
+- Respiration rate estimation.
+- Preliminary signal-quality assessment.
+
+**Important:** The existing pipeline assumes a sampling frequency close to 250 Hz for respiration processing. If the actual hardware sampling frequency differs, update the resampling and filter-design functions before processing.
+
+### Step 5: Analyse and Validate Results
+
+Inspect the filtered cardiac and respiratory signals and verify that detected peaks correspond to meaningful signal patterns.
+
+Compare the estimated values against independent reference measurements:
+
+- Heart rate: pulse oximeter or another suitable reference.
+- Respiration rate: an independent respiratory measurement.
+
+Record the estimated values, reference values, and errors. Do not consider the estimates clinically validated without appropriate testing.
+
+### Step 6: Save the Results
+
+Save the following in the appropriate folders:
+
+- Original hardware recording → `data/raw/`
+- Processed signals and result CSVs → `data/processed/`
+- Analysis plots → `figures/`
+
+Use recording-specific filenames to avoid overwriting results
